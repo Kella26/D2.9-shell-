@@ -1,0 +1,229 @@
+(venv)\PycharmProjects\D2.9\NewsPaper> python manage.py shell
+
+(InteractiveConsole)
+>>>
+>>> from news.models import *
+
+>>> u1 = User.objects.create_user(username='Rick')
+>>> u1
+<User: Rick>
+
+>>> u2 = User.objects.create_user(username='Kai')   
+>>> u2
+<User: Kai>
+
+
+>>> Author.objects.create(authorUser=u1)
+<Author: Author object (1)>
+
+>>> Author.objects.create(authorUser=u2)
+<Author: Author object (2)>
+
+
+>>> Category.objects.create(name='IT')
+<Category: Category object (1)>
+
+>>> Category.objects.create(name='Sports')
+<Category: Category object (2)>
+
+>>> Category.objects.create(name='Politics')
+<Category: Category object (3)>
+
+>>> Category.objects.create(name='Show-Business')   
+<Category: Category object (4)>
+
+
+>>> author1 = Author.objects.get(id=1)       
+>>> author1   
+<Author: Author object (1)>
+
+
+>>> Post.objects.create(author=author1, categoryType='AR', title='python programming', text='a lot of useful information')
+<Post: Post object (1)>
+>>> Post.objects.get(id=1).title
+'python programming'
+
+>>> Post.objects.get(id=1).categoryType  
+'AR'
+
+
+>>> author2 = Author.objects.get(id=2)
+>>> author2
+<Author: Author object (2)>
+
+
+>>> Post.objects.create(author=author2, categoryType='AR', title='Django', text='a lot of useful information')
+<Post: Post object (2)>
+
+>>> Post.objects.get(id=2).title
+'Django'
+
+>>> Post.objects.get(id=2).categoryType
+'AR'
+
+>>> Post.objects.create(author=author2, categoryType='NW', title='Python 3.12', text='something new')
+<Post: Post object (3)>
+
+>>> Post.objects.get(id=3).categoryType 
+'NW'
+
+
+>>> Post.objects.get(id=1).postCategory.add(Category.objects.get(id=1))
+>>> Post.objects.get(id=1).postCategory.add(Category.objects.get(id=2))  
+>>> PostCategory.objects.get(id=1).postThrough
+<Post: Post object (1)>
+>>> PostCategory.objects.get(id=1).categoryThrough
+<Category: Category object (1)>
+
+>>> Post.objects.get(id=2).postCategory.add(Category.objects.get(id=1))
+>>> Post.objects.get(id=2).postCategory.add(Category.objects.get(id=2))
+>>> PostCategory.objects.get(id=2).categoryThrough
+<Category: Category object (2)>
+
+>>> Post.objects.get(id=3).postCategory.add(Category.objects.get(id=1))  
+>>> Post.objects.get(id=3).postCategory.add(Category.objects.get(id=2)) 
+>>> PostCategory.objects.get(id=3).categoryThrough    
+<Category: Category object (1)>
+
+
+>>> Comment.objects.create(commentPost=Post.objects.get(id=1), commentUser=Author.objects.get(id=1).authorUser, text='Grandson check out the article')  
+<Comment: Comment object (1)>
+>>> Comment.objects.get(id=1).text
+'Grandson check out the article'
+
+>>> Comment.objects.create(commentPost=Post.objects.get(id=1), commentUser=Author.objects.get(id=2).authorUser, text='Thank you father, I want to become a programmer :)')      
+<Comment: Comment object (2)>
+>>> Comment.objects.get(id=2).text 
+'Thank you father, I want to become a programmer :)'
+
+>>> Comment.objects.create(commentPost=Post.objects.get(id=2), commentUser=Author.objects.get(id=1).authorUser, text='Yes, this is what you need!')
+<Comment: Comment object (3)>
+>>> Comment.objects.get(id=3).text
+'Yes, this is what you need!'
+
+>>> Comment.objects.create(commentPost=Post.objects.get(id=3), commentUser=Author.objects.get(id=2).authorUser, text='SkillFactory will help you figure it out! Grandpa advised me!')  
+<Comment: Comment object (4)>
+>>> Comment.objects.get(id=4).text
+'SkillFactory will help you figure it out! Grandpa advised me!'
+
+
+>>> Post.objects.get(id=1).like()
+>>> Post.objects.get(id=1).like()
+>>> Post.objects.get(id=1).rating
+2
+
+>>> Comment.objects.get(id=1).like()
+>>> Comment.objects.get(id=1).like()
+>>> Comment.objects.get(id=1).like()
+>>> Comment.objects.get(id=1).rating
+3
+
+>>> Comment.objects.get(id=2).like()
+>>> Comment.objects.get(id=2).like()
+>>> Comment.objects.get(id=2).dislike()
+>>> Comment.objects.get(id=2).dislike()
+>>> Comment.objects.get(id=2).rating
+0
+
+>>> Post.objects.get(id=2).like()
+>>> Post.objects.get(id=2).like()
+>>> Post.objects.get(id=2).dislike()  
+>>> Post.objects.get(id=2).rating
+1
+
+>>> Post.objects.get(id=3).like() 
+>>> Post.objects.get(id=3).like() 
+>>> Post.objects.get(id=3).like() 
+>>> Post.objects.get(id=3).dislike() 
+>>> Post.objects.get(id=3).rating 
+2
+
+>>> Comment.objects.get(id=4).like()
+>>> Comment.objects.get(id=4).like()
+>>> Comment.objects.get(id=4).like()
+>>> Comment.objects.get(id=4).like()
+>>> Comment.objects.get(id=4).like()
+>>> Comment.objects.get(id=4).rating
+5
+
+
+>>> Author.objects.get(id=1)
+<Author: Author object (1)>
+>>> a = Author.objects.get(id=1)
+>>> a.update_rating()
+>>> a.ratingAuthor
+9
+
+>>> b = Author.objects.get(id=2)
+>>> b.update_rating()
+>>> b.ratingAuthor
+14
+
+
+>>> best_author = Author.objects.order_by('-ratingAuthor')[:1]
+>>> best_author
+<QuerySet [<Author: Author object (2)>]>
+
+
+>>> all_rating_author = Author.objects.order_by('-ratingAuthor')
+>>> all_rating_author
+<QuerySet [<Author: Author object (2)>, <Author: Author object (1)>]>
+
+
+>>> for i in all_rating_author:
+...               i.ratingAuthor 
+...               i.authorUser.username
+...
+14
+'Kai'
+9
+'Rick'
+
+
+>>> Post.objects.get(id=1).preview() 
+'a lot of useful information...'
+>>> Post.objects.get(id=2).preview()
+'a lot of useful information...'
+>>> Post.objects.get(id=3).preview() 
+'something new...'
+
+
+>>> best_post = Post.objects.order_by('-rating')[:1]
+>>> best_post
+<QuerySet [<Post: Post object (1)>]>
+
+
+>>> for i in best_post:
+     ...     i.dateCreation
+     ...     i.author.authorUser
+     ...     i.rating
+     ...     i.title
+     ...     i.preview()
+     ... 
+     datetime.datetime(2023, 11, 17, 16, 41, 3, 928129, tzinfo=datetime.timezone.utc)
+     <User: Rick>
+     2
+     'python programming'
+     'a lot of useful information...'
+
+
+>>> best_post_com = Comment.objects.filter(commentPost=best_post) 
+>>> best_post_com
+<QuerySet [<Comment: Comment object (1)>, <Comment: Comment object (2)>]>
+
+
+>>> for k in best_post_com:
+     ...     k.dateCreation
+     ...     k.commentUser
+     ...     k.rating
+     ...     k.text
+     ... 
+     datetime.datetime(2023, 11, 19, 14, 53, 14, 695981, tzinfo=datetime.timezone.utc)
+     <User: Rick>
+     2
+     'Grandson check out the article'
+     datetime.datetime(2023, 11, 19, 15, 0, 11, 960516, tzinfo=datetime.timezone.utc)
+     <User: Kai>
+     0
+     'Thank you father, I want to become a programmer :)'
+
